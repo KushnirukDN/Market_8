@@ -40,7 +40,7 @@ public class Order implements Serializable {
     @Override
     public String toString() {
         return  price +
-                ", " + size +
-                "\n" ;
+                "," + size +
+                "\n";
     }
 }

@@ -11,13 +11,31 @@ public class OrderParser {
     }
 
     public static void writeToAsk (String[] array) {
-        bookA.put(Integer.parseInt(array[1]),
-                new Order(array[1], array[2], array[3]));
+        int price = Integer.parseInt(array[1]);
+        int size = Integer.parseInt(array[2]);
+
+        //checkBookB(price);
+
+        if (bookA.containsKey(price)) {
+            bookA.get(price).setSize(size);
+        } else {
+            bookA.put(Integer.parseInt(array[1]),
+                    new Order(array[1], array[2], array[3]));
+        }
     }
 
     public static void writeToBid (String[] array) {
-        bookB.put(Integer.parseInt(array[1]),
-                new Order(array[1], array[2], array[3]));
+        int price = Integer.parseInt(array[1]);
+        int size = Integer.parseInt(array[2]);
+
+       // checkBookA(price);
+
+        if (bookB.containsKey(price)) {
+            bookB.get(price).setSize(size);
+        } else {
+            bookB.put(Integer.parseInt(array[1]),
+                    new Order(array[1], array[2], array[3]));
+        }
     }
 
     public static boolean defineType (String[] array) {
@@ -26,5 +44,17 @@ public class OrderParser {
             ifAsk = true;
         }
         return ifAsk;
+    }
+
+    public static void checkBookA(int price) {
+        if (bookA.containsKey(price)) {
+            bookA.remove(price);
+        }
+    }
+
+    public static void checkBookB(int price) {
+        if (bookB.containsKey(price)) {
+            bookB.remove(price);
+        }
     }
 }
