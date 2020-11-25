@@ -25,12 +25,11 @@ public class Query {
 
     public static void sizePrice(TreeMap<Integer, Order> bookA, TreeMap<Integer, Order> bookB, int price) throws IOException {
         if (bookA.containsKey(price)) {
-            ReadWrite.writeResult(Integer.toString(bookA.get(price).getSize()));
+            ReadWrite.writeResult(Integer.toString(bookA.get(price).getSize()) + "\n");
         } else if (bookB.containsKey(price)) {
-            ReadWrite.writeResult(Integer.toString(bookB.get(price).getSize()));
+            ReadWrite.writeResult(Integer.toString(bookB.get(price).getSize()) + "\n");
         } else {
-            ReadWrite.writeResult("0");
-
+            ReadWrite.writeResult("0\n");
         }
     }
 
