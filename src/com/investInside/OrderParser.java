@@ -1,6 +1,5 @@
 package com.investInside;
 
-import java.io.IOException;
 import java.util.TreeMap;
 
 public class OrderParser {
@@ -8,8 +7,7 @@ public class OrderParser {
     static TreeMap<Integer, Order> bookB = new TreeMap<>();
 
     public static String[] createOrderArray (String unit)  {
-        String[] array = unit.split(",");
-        return array;
+        return unit.split(",");
     }
 
     public static void writeToAsk (String[] array) {

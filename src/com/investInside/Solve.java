@@ -1,6 +1,5 @@
 package com.investInside;
 
-
 import java.io.IOException;
 
 public class Solve {
@@ -29,7 +28,6 @@ public class Solve {
                    break;
 
                case("o"):
-
                    if (array[1].equals("buy")) {
                        Order updatedOrder = Query.buy(OrderParser.bookA, Integer.parseInt(array[2]));
                        OrderParser.bookA.put(updatedOrder.getPrice(), updatedOrder);
@@ -37,10 +35,11 @@ public class Solve {
                        Order updatedOrder = Query.sell(OrderParser.bookB, Integer.parseInt(array[2]));
                        OrderParser.bookB.put(updatedOrder.getPrice(), updatedOrder);
                    }
-
                    break;
+
                default:
-                   System.out.println("какая-то лажа");
+                   System.out.println("Wrong input");
+                   break;
            }
         }
     }

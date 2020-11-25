@@ -37,11 +37,6 @@ public class Order implements Serializable {
         this.type = type;
     }
 
-   /* @Override
-    public String toString() {
-        return price + ", " + size + "\n";
-    }*/
-
     @Override
     public String toString() {
         return  price +
