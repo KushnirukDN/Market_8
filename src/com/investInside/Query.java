@@ -1,68 +1,34 @@
 package com.investInside;
 
-import java.io.IOException;
-import java.util.TreeMap;
-
 public class Query {
-    public static void bestBid(TreeMap<Integer, Order> orders) throws IOException {
-        int count = 0;
-        int size = orders.get(orders.lastKey() - count).getSize();
-        if (size == 0) {
-            while (size == 0) {
-                count++;
-                size = orders.get(orders.lastKey() - count).getSize();
-            }
+    public static Order bestBid() {
+        int size = UpdateBooks.bookOfBid.get(UpdateBooks.bookOfBid.lastKey()).getSize();
+        while(size == 0) {
+            UpdateBooks.bookOfBid.remove(UpdateBooks.bookOfBid.lastKey());
+            size = UpdateBooks.bookOfBid.get(UpdateBooks.bookOfBid.lastKey()).getSize();
         }
-        ReadWrite.writeResult(orders.get(orders.lastKey() - count).toString());
+        return UpdateBooks.bookOfBid.get(UpdateBooks.bookOfBid.lastKey());
     }
 
-    public static void bestAsk(TreeMap<Integer, Order> orders) throws IOException {
-        int count = 0;
-        int size = orders.get(orders.firstKey() + count).getSize();
-        if (size == 0) {
-            while (size == 0) {
-                count++;
-                size = orders.get(orders.firstKey() + count).getSize();
-            }
+    public static Order bestAsk()  {
+       int size = UpdateBooks.bookOfAsk.get(UpdateBooks.bookOfAsk.firstKey()).getSize();
+
+        while(size == 0) {
+            UpdateBooks.bookOfAsk.remove(UpdateBooks.bookOfAsk.firstKey());
+            size = UpdateBooks.bookOfAsk.get(UpdateBooks.bookOfAsk.lastKey()).getSize();
         }
-        ReadWrite.writeResult(orders.get(orders.firstKey() + count).toString());
+        return UpdateBooks.bookOfAsk.get(UpdateBooks.bookOfAsk.firstKey());
     }
 
-    public static void sizePrice(TreeMap<Integer, Order> bookA, TreeMap<Integer, Order> bookB, int price) throws IOException {
-        if (bookA.containsKey(price)) {
-            ReadWrite.writeResult(bookA.get(price).getSize() + "\n");
-        } else if (bookB.containsKey(price)) {
-            ReadWrite.writeResult(bookB.get(price).getSize() + "\n");
+    public static void sizePrice(int price) {
+        if (UpdateBooks.bookOfAsk.containsKey(price)) {
+            ReadWrite.writeOutput(UpdateBooks.bookOfAsk.get(price).toString(UpdateBooks.bookOfAsk.get(price).getSize()));
+        } else if (UpdateBooks.bookOfBid.containsKey(price)) {
+            ReadWrite.writeOutput(UpdateBooks.bookOfBid.get(price).toString(UpdateBooks.bookOfBid.get(price).getSize()));
         } else {
-            ReadWrite.writeResult("0\n");
-        }
-    }
-
-    public static Order buy(TreeMap<Integer, Order> orders, int shares){
-        int count = 0;
-        int size = orders.get(orders.firstKey() + count).getSize();
-        if (size == 0) {
-            while (size == 0) {
-                count++;
-                size = orders.get(orders.firstKey() + count).getSize();
+            if (price < bestAsk().getPrice() && price > bestBid().getPrice()) {
+                ReadWrite.writeZeroResult();
             }
         }
-        Order tempOrder = orders.get(orders.firstKey() + count);
-        tempOrder.setSize(tempOrder.getSize() - shares);
-        return tempOrder;
-    }
-
-    public static Order sell(TreeMap<Integer, Order> orders, int shares) {
-        int count = 0;
-        int size = orders.get(orders.lastKey() - count).getSize();
-        if (size == 0) {
-            while (size == 0) {
-                count++;
-                size = orders.get(orders.lastKey() - count).getSize();
-            }
-        }
-        Order tempOrder = orders.get(orders.lastKey() - count);
-        tempOrder.setSize(tempOrder.getSize() - shares);
-        return tempOrder;
     }
 }

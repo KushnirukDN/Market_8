@@ -1,46 +1,93 @@
 package com.investInside;
 
-import java.io.IOException;
-
 public class Solve {
-    public static void solve (String[] units) throws IOException {
+    private final UpdateBooks updateBooks;
+    private final ReadWrite readWrite;
+    private final Query query;
+    private final MarketOder marketOder;
 
-        for (String str : units) {
-           String[] array = OrderParser.createOrderArray(str);
+    public Solve(UpdateBooks updateBooks, ReadWrite readWrite, Query query, MarketOder marketOder) {
+        this.updateBooks = updateBooks;
+        this.readWrite = readWrite;
+        this.query = query;
+        this.marketOder = marketOder;
+    }
 
-           switch (array[0]) {
-               case("u"):
-                   if (OrderParser.defineType(array)) {
-                       OrderParser.writeToAsk(array);
-                   } else {
-                       OrderParser.writeToBid(array);
-                   }
-                   break;
+    public void solving(String[] inputsList) {
+        for (String inputItem : inputsList) {
+            String[] tempArray = inputItem.split(",");//Массив из строки разделенный по запятым, для парсинга и создания Order
+            Order order = new Order();
 
-               case("q"):
-                   if (array[1].equals("best_bid")) {
-                       Query.bestBid(OrderParser.bookB);
-                   } else if (array[1].equals("best_ask")) {
-                       Query.bestAsk(OrderParser.bookA);
-                   } else {
-                       Query.sizePrice(OrderParser.bookA, OrderParser.bookB, Integer.parseInt(array[2]));
-                   }
-                   break;
+            order.setOperationType(tempArray[0]); //определения типа операции, от него зависит как именно собирается объект Order
 
-               case("o"):
-                   if (array[1].equals("buy")) {
-                       Order updatedOrder = Query.buy(OrderParser.bookA, Integer.parseInt(array[2]));
-                       OrderParser.bookA.put(updatedOrder.getPrice(), updatedOrder);
-                   } else {
-                       Order updatedOrder = Query.sell(OrderParser.bookB, Integer.parseInt(array[2]));
-                       OrderParser.bookB.put(updatedOrder.getPrice(), updatedOrder);
-                   }
-                   break;
+            switch (order.getOperationType()) {
+                case UPDATE:
+                    order.setPrice(Integer.parseInt(tempArray[1]));
+                    order.setSize(Integer.parseInt(tempArray[2]));
+                    order.setOrderType(tempArray[3]);
+                    processUpdate(order);
+                    break;
+                case QUERY:
+                    order.setOrderType(tempArray[1]);
+                    switch (order.getOrderType()) {
+                        case SIZE:
+                            order.setPrice(Integer.parseInt(tempArray[2]));
+                            break;
+                        default:
+                            break;
+                    }
+                    processQuery(order);
+                    break;
+                case MARKET_ORDER:
+                    order.setOrderType(tempArray[1]);
+                    order.setSize(Integer.parseInt(tempArray[2]));
+                    processMarketOrder(order, order.getSize());
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
-               default:
-                   System.out.println("Wrong input");
-                   break;
-           }
+    public void processUpdate(Order order) {
+        switch (order.getOrderType()) {
+            case ASK:
+                updateBooks.writeToAsk(order);
+                break;
+            case BID:
+                updateBooks.writeToBid(order);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void processQuery(Order order)  {
+            switch (order.getOrderType()) {
+                case BEST_ASK:
+                    readWrite.writeOutput(query.bestAsk().toString());
+                    break;
+                case BEST_BID:
+                    readWrite.writeOutput(query.bestBid().toString());
+                    break;
+                case SIZE:
+                    query.sizePrice(order.getPrice());
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    private void processMarketOrder(Order order, int shares) {
+        switch (order.getOrderType()) {
+            case SELL:
+                marketOder.sell(shares);
+                break;
+            case BUY:
+                marketOder.buy(shares);
+                break;
+            default:
+                break;
         }
     }
 }
